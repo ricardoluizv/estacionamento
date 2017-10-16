@@ -65,16 +65,34 @@ to Start
   ]
 
   every 0.1[
-   Entrada_Start 0
-   Entrada_Start 1
-   Entrada_Start 2
-   Entrada_Start 3
-   Entrada_Start 4
-  ]
+  Entrada_Start 0
 
+   ]
 
+  every 0.1[
+  Entrada_Start 1
+    display
+   ]
 
+  every 0.1[
+  Entrada_Start 2
+    display
+   ]
 
+  every 0.1[
+  Entrada_Start 3
+    display
+   ]
+
+   every 0.1[
+  Entrada_Start 4
+    display
+   ]
+
+  ;Entrada_Start 1
+  ;Entrada_Start 2
+  ;Entrada_Start 3
+  ;Entrada_Start 4
 
 
 

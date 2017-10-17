@@ -7,107 +7,160 @@ breed [carros carro]
 breed [cancelas cancela]
 breed [cancela_barras cancela_barra]
 
-globals [totalEstacionado]
+
+
+carros-own[
+  pos-x
+  pos-y
+  carro_id
+  cancela_id
+]
+
+cancelas-own[
+   pos-x
+   pos-y
+   cancela_id
+]
+
+
+globals[
+  totalEstacionado
+  contagem-carros
+  contador-while
+  maxCarros
+]
 
 
 ;Prepara a exibição e configurações iniciais
 to Setup
+
+  set contagem-carros 0
+
   set totalEstacionado 0
   clear-all
   ask patches [set pColor white]
 
   ;;PREPARA O LAYOUT - ENTRADA
 
-  AddCarro
-  AddCarro
-  AddCarro
-  AddCarro
-  AddCarro
-  ask carro 0 [setxy -30 -8]
-  ask carro 1 [setxy -20 -8]
-  ask carro 2 [setxy -11 -8]
-  ask carro 3 [setxy -1.5 -8]
-  ask carro 4 [setxy  8.5 -8]
+  ;AddCarro
+  ;AddCarro
+  ;AddCarro
+  ;AddCarro
+  ;AddCarro
+  ;ask carro 0 [setxy -30 -8]
+  ;ask carro 1 [setxy -20 -8]
+  ;ask carro 2 [setxy -11 -8]
+  ;ask carro 3 [setxy -1.5 -8]
+  ;ask carro 4 [setxy  8.5 -8]
 
   create-cancelas 5
   ask cancelas [set shape "cancela mastro" set size 5 set color orange set heading 0]
 
-  ask cancela 5 [setxy -32 10]
-  ask cancela 6 [setxy -23 10]
-  ask cancela 7 [setxy -14 10]
-  ask cancela 8 [setxy -4.5 10]
-  ask cancela 9 [setxy  5 10]
+  ask cancela 0 [setxy -32 10]
+  ask cancela 1 [setxy -23 10]
+  ask cancela 2 [setxy -14 10]
+  ask cancela 3 [setxy -4.5 10]
+  ask cancela 4 [setxy  5 10]
 
   create-cancela_barras 5
   ask cancela_barras [set shape "cancela barra" set size 6 set heading 0 set color 6]
 
-  ask cancela_barra 10 [setxy -29.5 10.5]
-  ask cancela_barra 11 [setxy -20.5 10.5]
-  ask cancela_barra 12 [setxy -11.5 10.5]
-  ask cancela_barra 13 [setxy -2 10.5]
-  ask cancela_barra 14 [setxy  7.5 10.5]
+  ask cancela_barra 5 [setxy -29.5 10.5]
+  ask cancela_barra 6 [setxy -20.5 10.5]
+  ask cancela_barra 7 [setxy -11.5 10.5]
+  ask cancela_barra 8 [setxy -2 10.5]
+  ask cancela_barra 9 [setxy  7.5 10.5]
 
-  ;;PREPARA O LAYOUT - SAÍDA
+  ;AddCarro -30 2 0
 
-  AddCarro
-  AddCarro
-  AddCarro
-  AddCarro
-  AddCarro
-  AddCarro
-  ask carro 15 [setxy -30 -8]
-  ask carro 16 [setxy -20 -8]
-  ask carro 17 [setxy -11 -8]
-  ask carro 18 [setxy -1.5 -8]
-  ask carro 19 [setxy  8.5 -8]
-  ask carro 20 [setxy  8.5 -8]
+  let contPos -39
+  let contCancelaId 0
+  Output-print "Teste"
 
-  create-cancelas 6
-  ask cancelas [set shape "cancela mastro" set size 5 set color orange set heading 0]
+  set maxCarros 5
 
-  ask cancela 21 [setxy 15    -10]
-  ask cancela 22 [setxy 24    -10]
-  ask cancela 23 [setxy 33    -10]
-  ask cancela 24 [setxy 42    -10]
-  ask cancela 25 [setxy 51    -10]
-  ask cancela 26 [setxy 60    -10]
+  Output-print "max-carros: "
+  Output-print maxCarros
+  while [contagem-carros < maxCarros][
+      set contPos contPos + 9.5
+      print (word "contPos: " contPos)
 
-  create-cancela_barras 6
-  ask cancela_barras [set shape "cancela barra" set size 6 set heading 0 set color 6]
+      Output-print contagem-carros
 
-  ask cancela_barra 27 [setxy  17.5  -10.5]
-  ask cancela_barra 28 [setxy  26.5  -10.5]
-  ask cancela_barra 29 [setxy  35.5  -10.5]
-  ask cancela_barra 30 [setxy  44.5  -10.5]
-  ask cancela_barra 31 [setxy  53.5  -10.5]
-  ask cancela_barra 32 [setxy  62.5  -10.5]
+      AddCarro contPos 2 contCancelaId
+      set contCancelaId contCancelaId + 1
+
+
+  ]
 
   reset-ticks
 
 end
 
-to AddCarro
-  create-carros 1
-  ask carros [set shape "car top" set size 5 set color red set heading 0 ht]
+;to AddCarro
+;  create-carros 1
+;  ask carros [set shape "car top" set size 5 set color red set heading 0 ht]
+;end
+
+to AddCarro[x y cancelaId]
+
+  set contagem-carros contagem-carros + 1
+
+  create-carros 1[
+    set shape "car top"
+    set size 5
+    set color red
+    set heading 0
+    ;ht ;ocultar
+    set pos-x x
+    set pos-y y
+    setxy pos-x pos-y
+    set carro_id contagem-carros
+    set cancela_id cancelaId
+
+  ]
+
 end
 
 
 ;Inicia a simulação
 to Start
 
-  ;;Se for clicado em iniciar sem clicar no setup primeiro, força a execução do setup
-  if totalEstacionado != 0 [
-    Setup
+  ask carros[
+    if (carro_id mod 2) = 0 and (ycor < 7) [
+      set pos-y pos-y + 1
+      setxy pos-x pos-y
+      if pos-y > 25 [
+        ;die
+      ]
+    ]
+    if (carro_id mod 2) = 1 [
+      set pos-y pos-y + 1
+      setxy pos-x pos-y
+      if pos-y > 25 [
+        ;die
+      ]
+
+    ]
+    if (carro_id mod 2) = 0  and (ycor < 7)[
+        ask cancela_barra cancela_id [set heading -45 setxy -30 12.5 ]
+     ]
+
   ]
 
-  every 0.1[
-   Entrada_Start 0
-   Entrada_Start 1
-   Entrada_Start 2
-   Entrada_Start 3
-   Entrada_Start 4
-  ]
-  display
+  ;;Se for clicado em iniciar sem clicar no setup primeiro, força a execução do setup
+  ;if totalEstacionado != 0 [
+  ;  Setup
+  ;]
+
+  ;every 0.1[
+  ; Entrada_Start 0
+  ; Entrada_Start 1
+  ; Entrada_Start 2
+  ; Entrada_Start 3
+  ; Entrada_Start 4
+  ;]
+  ;display
 
   ;clear-Output
   tick
@@ -229,11 +282,11 @@ end
 GRAPHICS-WINDOW
 210
 10
-2072
-937
+1454
+631
 -1
 -1
-18.0
+12.0
 1
 10
 1
@@ -247,8 +300,8 @@ GRAPHICS-WINDOW
 70
 -25
 25
-0
-0
+1
+1
 0
 ticks
 60.0
@@ -277,7 +330,7 @@ BUTTON
 49
 Iniciar
 Start
-NIL
+T
 1
 T
 OBSERVER
@@ -291,7 +344,7 @@ OUTPUT
 6
 124
 171
-178
+313
 12
 
 @#$#@#$#@

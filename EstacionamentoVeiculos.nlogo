@@ -16,6 +16,8 @@ to Setup
   clear-all
   ask patches [set pColor white]
 
+  ;;PREPARA O LAYOUT - ENTRADA
+
   AddCarro
   AddCarro
   AddCarro
@@ -45,6 +47,40 @@ to Setup
   ask cancela_barra 13 [setxy -2 10.5]
   ask cancela_barra 14 [setxy  7.5 10.5]
 
+  ;;PREPARA O LAYOUT - SAÍDA
+
+  AddCarro
+  AddCarro
+  AddCarro
+  AddCarro
+  AddCarro
+  AddCarro
+  ask carro 15 [setxy -30 -8]
+  ask carro 16 [setxy -20 -8]
+  ask carro 17 [setxy -11 -8]
+  ask carro 18 [setxy -1.5 -8]
+  ask carro 19 [setxy  8.5 -8]
+  ask carro 20 [setxy  8.5 -8]
+
+  create-cancelas 6
+  ask cancelas [set shape "cancela mastro" set size 5 set color orange set heading 0]
+
+  ask cancela 21 [setxy 15    -10]
+  ask cancela 22 [setxy 24    -10]
+  ask cancela 23 [setxy 33    -10]
+  ask cancela 24 [setxy 42    -10]
+  ask cancela 25 [setxy 51    -10]
+  ask cancela 26 [setxy 60    -10]
+
+  create-cancela_barras 6
+  ask cancela_barras [set shape "cancela barra" set size 6 set heading 0 set color 6]
+
+  ask cancela_barra 27 [setxy  17.5  -10.5]
+  ask cancela_barra 28 [setxy  26.5  -10.5]
+  ask cancela_barra 29 [setxy  35.5  -10.5]
+  ask cancela_barra 30 [setxy  44.5  -10.5]
+  ask cancela_barra 31 [setxy  53.5  -10.5]
+  ask cancela_barra 32 [setxy  62.5  -10.5]
 
   reset-ticks
 
@@ -71,17 +107,16 @@ to Start
    Entrada_Start 3
    Entrada_Start 4
   ]
-
-
-
-
-
-
+  display
 
   ;clear-Output
   tick
 
 end
+;;;
+;;;CANCELAS DE ENTRADA
+;;;ANIMAÇÃO
+;;;
 
 ;;;Mover um carro, na cancela de entrada
 to Entrada_Start [idCarro]
@@ -185,11 +220,16 @@ to Saida_BarraFechar [id]
   ]
 
 end
+
+;;;
+;;;CANCELAS DE SAÍDA
+;;;ANIMAÇÃO
+;;;
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-1892
+2072
 937
 -1
 -1
@@ -204,7 +244,7 @@ GRAPHICS-WINDOW
 1
 1
 -32
-60
+70
 -25
 25
 0

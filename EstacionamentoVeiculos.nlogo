@@ -16,7 +16,7 @@ carros-own[
   cancela_id
 ]
 
-cancelas-own[
+cancela_barras-own[
    pos-x
    pos-y
    cancela_id
@@ -26,6 +26,7 @@ cancelas-own[
 globals[
   totalEstacionado
   contagem-carros
+  contagem-cancelas
   contador-while
   maxCarros
 ]
@@ -35,7 +36,7 @@ globals[
 to Setup
 
   set contagem-carros 0
-
+  set contagem-cancelas 0
   set totalEstacionado 0
   clear-all
   ask patches [set pColor white]
@@ -59,21 +60,29 @@ to Setup
   ask cancela 0 [setxy -32 10]
   ask cancela 1 [setxy -23 10]
   ask cancela 2 [setxy -14 10]
-  ask cancela 3 [setxy -4.5 10]
-  ask cancela 4 [setxy  5 10]
+  ask cancela 3 [setxy -5 10]
+  ask cancela 4 [setxy  4 10]
 
-  create-cancela_barras 5
-  ask cancela_barras [set shape "cancela barra" set size 6 set heading 0 set color 6]
+  ;create-cancela_barras 5
+  ;ask cancela_barras [set shape "cancela barra" set size 6 set heading 0 set color 6]
 
-  ask cancela_barra 5 [setxy -29.5 10.5]
-  ask cancela_barra 6 [setxy -20.5 10.5]
-  ask cancela_barra 7 [setxy -11.5 10.5]
-  ask cancela_barra 8 [setxy -2 10.5]
-  ask cancela_barra 9 [setxy  7.5 10.5]
+  ;ask cancela_barra 5 [setxy -29.5 10.5]
+  ;ask cancela_barra 6 [setxy -20.5 10.5]
+  ;ask cancela_barra 7 [setxy -11.5 10.5]
+  ;ask cancela_barra 8 [setxy -2 10.5]
+  ;ask cancela_barra 9 [setxy  7.5 10.5]
+
+  let contPos -38.5
+
+  while [contagem-cancelas < 5][
+       set contPos contPos + 9
+       AddCancelaBarra contPos 10.5
+  ]
+
 
   ;AddCarro -30 2 0
 
-  let contPos -39
+  set contPos -39
   let contCancelaId 0
   Output-print "Teste"
 
@@ -118,6 +127,23 @@ to AddCarro[x y cancelaId]
     set carro_id contagem-carros
     set cancela_id cancelaId
 
+  ]
+
+end
+
+to AddCancelaBarra[x y]
+
+  set contagem-cancelas contagem-cancelas + 1
+
+  create-cancela_barras 1[
+      set shape "cancela barra"
+      set size 6
+      set heading 0
+      set color 6
+      set pos-x x
+      set pos-y y
+      setxy x y
+      set cancela_id contagem-cancelas
   ]
 
 end

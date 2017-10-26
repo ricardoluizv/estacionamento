@@ -19,7 +19,7 @@ carros-own[
 cancela_barras-own[
    pos-x
    pos-y
-   cancela_id
+   barra_cancela_id
 ]
 
 
@@ -92,12 +92,12 @@ to Setup
   Output-print maxCarros
   while [contagem-carros < maxCarros][
       set contPos contPos + 9.5
-      print (word "contPos: " contPos)
+      ;print (word "contPos: " contPos)
 
-      Output-print contagem-carros
-
-      AddCarro contPos 2 contCancelaId
+      ;Output-print contagem-carros
       set contCancelaId contCancelaId + 1
+      AddCarro contPos 2 contCancelaId
+
 
 
   ]
@@ -143,7 +143,7 @@ to AddCancelaBarra[x y]
       set pos-x x
       set pos-y y
       setxy x y
-      set cancela_id contagem-cancelas
+      set barra_cancela_id contagem-cancelas
   ]
 
 end
@@ -151,6 +151,8 @@ end
 
 ;Inicia a simulação
 to Start
+
+  let testeId 0
 
   ask carros[
     if (carro_id mod 2) = 0 and (ycor < 7) [
@@ -168,8 +170,24 @@ to Start
       ]
 
     ]
+
+    set testeId cancela_id
+
     if (carro_id mod 2) = 0  and (ycor < 7)[
-        ask cancela_barra cancela_id [set heading -45 setxy -30 12.5 ]
+        ask cancela_barras [
+
+             if (barra_cancela_id = testeId)[
+                set heading -45
+                let x pos-x - 0.5
+                let y pos-y + 2
+                setxy x y
+
+                ;wait 1
+
+               ; setxy pos-x pos-y
+             ]
+
+        ]
      ]
 
   ]

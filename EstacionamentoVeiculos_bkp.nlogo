@@ -14,17 +14,12 @@ carros-own[
   pos-y
   carro_id
   cancela_id
-  carro_parado
-  carro_tick
-  carro_max_tick
 ]
 
 cancela_barras-own[
    pos-x
    pos-y
-   barra_cancela_id
-   cancela_aberta
-
+   cancela_id
 ]
 
 
@@ -34,8 +29,6 @@ globals[
   contagem-cancelas
   contador-while
   maxCarros
-  acoes_por_tick
-  acoes_por_tick_atual
 ]
 
 
@@ -64,7 +57,7 @@ to Setup
   create-cancelas 5
   ask cancelas [set shape "cancela mastro" set size 5 set color orange set heading 0]
 
-  ;ask cancela 0 [setxy -32 10]
+  ask cancela 0 [setxy -32 10]
   ask cancela 1 [setxy -23 10]
   ask cancela 2 [setxy -14 10]
   ask cancela 3 [setxy -5 10]
@@ -99,18 +92,15 @@ to Setup
   Output-print maxCarros
   while [contagem-carros < maxCarros][
       set contPos contPos + 9.5
-      ;print (word "contPos: " contPos)
+      print (word "contPos: " contPos)
 
-      ;Output-print contagem-carros
-      set contCancelaId contCancelaId + 1
+      Output-print contagem-carros
+
       AddCarro contPos 2 contCancelaId
-
+      set contCancelaId contCancelaId + 1
 
 
   ]
-
-  set acoes_por_tick 200
-  set acoes_por_tick_atual 0
 
   reset-ticks
 
@@ -153,7 +143,7 @@ to AddCancelaBarra[x y]
       set pos-x x
       set pos-y y
       setxy x y
-      set barra_cancela_id contagem-cancelas
+      set cancela_id contagem-cancelas
   ]
 
 end
@@ -161,10 +151,6 @@ end
 
 ;Inicia a simulação
 to Start
-
-
-
-  let testeId 0
 
   ask carros[
     if (carro_id mod 2) = 0 and (ycor < 7) [
@@ -182,28 +168,8 @@ to Start
       ]
 
     ]
-
-    let get_cancelaId cancela_id
-    let get_carro_parado carro_parado
-
     if (carro_id mod 2) = 0  and (ycor < 7)[
-        ask cancela_barras [
-
-             if (barra_cancela_id = get_cancelaId)[
-                set heading -45
-                let x pos-x - 0.5
-                let y pos-y + 2
-                setxy x y
-                set get_cancelaId get_cancelaId + 1
-              ;;while [carro_tick <= acoes_por_tick][
-               ;set carro_tick carro_tick + 1
-               ; setxy pos-x pos-y
-             ;]
-              show "Terminou"
-
-          ]
-
-        ]
+        ask cancela_barra cancela_id [set heading -45 setxy -30 12.5 ]
      ]
 
   ]
@@ -223,18 +189,6 @@ to Start
   ;display
 
   ;clear-Output
-
-   if acoes_por_tick_atual <= acoes_por_tick[
-
-      set acoes_por_tick_atual acoes_por_tick_atual + 1
-      show acoes_por_tick_atual
-   ]
-   if acoes_por_tick_atual = acoes_por_tick[
-      set acoes_por_tick_atual 0
-   ]
-
-
-
   tick
 
 end
@@ -354,11 +308,11 @@ end
 GRAPHICS-WINDOW
 210
 10
-2690
-1243
+1454
+631
 -1
 -1
-24.0
+12.0
 1
 10
 1
@@ -410,7 +364,7 @@ NIL
 NIL
 NIL
 NIL
-1
+0
 
 OUTPUT
 6

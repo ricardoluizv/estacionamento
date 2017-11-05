@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery.js"></script>
+    <script src="jquery-collision.min.js"></script>
+    <style type="text/css">
+
+        .divCancela{
+            float: left;
+            margin-right:30px;
+        }
+
+        .img_cancela{
+            width:18px;
+            height:120px;
+            display: block;
+
+        }
+
+        .img_cancela_barra{
+            width:143px;
+            height:14px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+
+        .itemBarraParada{
+            float: left;
+        }
+
+        .img_car {
+            width:95px;
+            height:103px;
+            transform: rotate(90deg);
+            position: absolute;
+
+        }
+
+
+
+        .divItemCancela{
+            float: left;
+        }
+
+        .divItemCancelaBarra{
+            float: left;
+            margin-top: 40px;
+            width: 161px;
+
+
+        }
+
+        .itemCancelaBarra{
+
+        }
+
+        #areaEntrada{
+            margin-top:10%;
+        }
+
+        .divItemCarro{
+            position: fixed;
+
+            z-index: -1;
+
+            bottom: 10%;
+        }
+
+
+
+        
+    </style>
+
+    <script type="text/javascript">
+
+        var cancelaEntrada = [0, 0, 0, 0]; //Inicializa as cancelas colocando como não ocupado
+        var carroEntrada = [0, 1, 2, 3];
+
+        //DADOS DAS POSIÇÕES DOS ELEMENTOS PARA ANIMAR
+        var listCarPos = new Array();
+        var listCancelaBarra = new Array();
+
+        //FIM DADOS DAS POSIÇÕES DOS ELEMENTOS PARA ANIMAR
+
+        //VALOR DE ENTRADA
+        var quantidadeCarro = 20;
+        var quantidadeEstacionado = 0;
+        var quantidadeCarroCriado = 0;
+        var carroSel = -1;
+
+        $(document).ready(function () {
+
+            $("#contador").text(quantidadeEstacionado);
+
+            cancelaEntrada.forEach(AddCancela);
+            cancelaEntrada.forEach(AddCancelaBarra);
+
+            $('#areaEntrada').append('<div style="clear: both;"></div>');
+
+
+            var posLeft = 40;
+            listCarPos[0] = posLeft;
+            for (var i=1; i< 4; i++)
+            {
+                posLeft += 220;
+                listCarPos[i] = posLeft;
+
+            }
+
+            if (quantidadeCarro > 0) {
+
+                SorteiaProxCancela();
+
+            }
+
+
+
+        });
+
+        function SorteiaProxCancela(){
+            var idCancela = parseInt((Math.random() * 100)%4);
+
+            if (cancelaEntrada[idCancela] == 0){
+                cancelaEntrada[idCancela] = 1; //Coloca como ocupado
+
+                if (quantidadeCarroCriado < quantidadeCarro) {
+                    carroSel++;
+                    var idCarro = carroSel;
+                    AddCarro(idCancela, listCarPos[idCancela], idCarro);
+
+                    ExecutaAnimacaoCarro(idCarro, idCancela);
+
+                }
+            }
+
+            if (quantidadeCarroCriado < quantidadeCarro){
+                setTimeout(SorteiaProxCancela, parseInt((Math.random() * 10000)%2000));
+            }
+        }
+
+        function sleep(milliseconds) {
+            var start = new Date().getTime();
+            for (var i = 0; i < 1e7; i++) {
+                if ((new Date().getTime() - start) > milliseconds){
+                    break;
+                }
+            }
+        }
+
+        function ExecutaAnimacaoCarro(idCarro,idCancela){
+
+            //alert(idCarro);
+
+            var limite = $(window).height();
+            limite = (limite / 2);
+            limite = limite - (limite * 0.4);
+
+            $('#divItemCarro'+idCarro).animate({
+                'top':limite
+            },2000, null, function(){
+                AbreCancela(idCancela, idCarro);
+            });
+
+        }
+
+        function ContinuaAnimacaoCarro(idCancela, idCarro) {
+
+           /* var postition = $('#divItemCarro'+idCancela).offset();
+            alert(postition.top);*/
+
+            var carroHeight =  $('#carro'+idCarro);
+            var distancia = carroHeight.outerHeight() * -1;
+
+           //alert(carroHeight.outerHeight());
+            $('#divItemCarro'+idCarro).animate({
+                'top':distancia
+            },2000, null, function(){
+
+                //$('#divItemCarro'+idCarro).remove();
+
+                FechaCancela(idCancela);
+            });
+
+        }
+        
+        
+        function AbreCancela(id, idCarro) {
+
+            //alert('teste');
+            $('#cancelaBarra'+id).animate({
+                'margin-left':'-30px'
+            }, 2000,null, function () {
+
+                ContinuaAnimacaoCarro(id,idCarro);
+            });
+
+            Rotacionar(-45, '#cancelaBarra'+id, 2000,0);
+        }
+        
+        function FechaCancela(idCancela) {
+
+
+
+            $('#cancelaBarra'+idCancela).animate({
+                'margin-left':'0px'
+            }, 2000,null, function () {
+
+                quantidadeEstacionado++;
+                $("#contador").text(quantidadeEstacionado);
+
+                cancelaEntrada[idCancela] = 0; //libera a cancela para o próximo carro
+
+            });
+
+            Rotacionar(0, '#cancelaBarra'+idCancela, 2000,-45);
+        }
+
+        function AddCancela(item, index) {
+
+            $('#areaEntrada').append('' +
+                '<div id="grupoCancela'+index+'" class="divCancela" >' +
+                '<div class="divItemCancela" id="divItemCancela'+index+'">' +
+                '   <img id="divImgCancela'+index+'" class="img_cancela" src="cancela.png" />' +
+                '</div>' +
+                '</div>');
+
+
+
+
+        }
+
+        function AddCancelaBarra(item, index) {
+            $('#grupoCancela'+index).append('<div class="divItemCancelaBarra"><img id="cancelaBarra'+index+'" class="img_cancela_barra" src="cancela_barra.png" /></div>');
+
+            //$('#areaEntrada').append('<div class="itemBarraParada"><img id="barra_parada\'+index+\'" class="barraParada" src="barra_parada.png" /></div>');
+
+        }
+
+        function AddCarro(index, left,  idCarro){
+
+            quantidadeCarroCriado++;
+            $('body').append('<div id="divItemCarro'+idCarro+'" class="divItemCarro" style=" left: '+left+'px;" >' +
+                '<img id="carro'+idCarro+'" class="img_car" src="car-top-red.png" />' +
+                '</div>');
+
+
+
+        }
+
+
+        function Rotacionar(graus, elem, duracao, grausAtual){
+
+            var $elem = $(elem);
+
+            // we use a pseudo object for the animation
+            // (starts from `0` to `angle`), you can name it as you want
+            $({deg: grausAtual}).animate({deg: graus}, {
+                duration: duracao,
+                step: function(now) {
+                    // in the step-callback (that is fired each step of the animation),
+                    // you can use the `now` paramter which contains the current
+                    // animation-position (`0` up to `angle`)
+                    $elem.css({
+                        transform: 'rotate(' + now + 'deg)',
+
+                    });
+                }
+            });
+        }
+
+
+    </script>
+
+</head>
+<body>
+    <!--<img class="img_car" src="car-top-red.png" />
+
+    <div id="carros"></div>-->
+    <div style="float:right">
+        <h3 id="contador">0</h3> carros estacionados
+    </div>
+
+
+    <div id="areaEntrada"></div>
+
+
+    <!--<div id="divItemCarro0" class="divItemCarro" style=""><img id="carro0" class="img_car" src="car-top-red.png"></div>-->
+
+
+</body>
+</html>

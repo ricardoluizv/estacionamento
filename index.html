@@ -63,10 +63,17 @@
 
         .divItemCarro{
             position: fixed;
-
             z-index: -1;
-
             /*bottom: 10%;*/
+        }
+
+        .float-menu {
+            position: absolute;
+            left: 200.5px;
+            bottom: 0;
+            width: 99.5%;
+            margin-top: 200px; margin-left: -200px;
+            background-color:silver;
         }
 
 
@@ -82,7 +89,8 @@
         var interv;
         //fim cronômetro
 
-        var cancelaEntrada = [0, 0, 0, 0,0,0]; //Inicializa as cancelas colocando como não ocupado
+        var cancelaEntrada = new Array(); //Inicializa as cancelas colocando como não ocupado
+        var cancelaSaida = new Array();
         var carroEntrada = [0, 1, 2, 3];
 
         //DADOS DAS POSIÇÕES DOS ELEMENTOS PARA ANIMAR
@@ -106,7 +114,22 @@
         $(document).ready(function () {
 
             $('#btnStart').click(function () {
-                Inicializa();
+
+                $(this).prop('disabled', true);
+
+                if ($('#txtLimiteEstacionamento').val() > 0 && $('#txtLimiteEstacionamento').val() <= 1180 )
+                {
+                    Inicializa();
+                }else{
+                    alert("O Nº. Total de véiculos não pode ultrapassar o limite de vagas (1180), ou inferior e igual a zero");
+                    location.reload();
+                }
+
+            });
+
+            $('#btnClear').click(function () {
+
+                location.reload();
             });
 
         });
@@ -114,6 +137,27 @@
 
 
         function Inicializa() {
+
+
+            cancelaEntrada = new Array(parseInt($("#txtTotalCancelasEntrada").val()));
+            for (var i=0; i< cancelaEntrada.length; i++){
+                cancelaEntrada[i] = 0;
+            }
+
+            cancelaSaida = new Array(parseInt($("#txtTotalCancelasSaida").val()));
+            for (var i=0; i< cancelaSaida.length; i++){
+                cancelaSaida[i] = 0;
+            }
+
+            quantidadeCarro = 0;
+            quantidadeEstacionado = 0;
+            quantidadeCarroCriado = 0;
+
+            quantidadeCarroSaindo = 0;
+            quantidadeCarroSaido = 0;
+
+            carroSel = -1;
+
 
             IniciarCronometro();
 
@@ -124,21 +168,23 @@
             cancelaEntrada.forEach(AddCancela);
             cancelaEntrada.forEach(AddCancelaBarra);
 
-            $('#grupoCancela'+(cancelaEntrada.length-1)).hide();
+            $('#grupoCancela'+(cancelaEntrada.length)).hide();
 
 
 
             $('#areaEntrada').append('<div style="clear: both;"></div>');
 
 
-            var posLeft = 40;
+            /*var posLeft = 40;
             listCarPos[0] = posLeft;
             for (var i=1; i< cancelaEntrada.length; i++)
             {
                 posLeft += 220;
                 listCarPos[i] = posLeft;
 
-            }
+            }*/
+
+            InicializaPosicoesCarro('entrada');
 
 
             if (quantidadeCarro > 0) {
@@ -159,6 +205,26 @@
 
             }
         }
+
+        function InicializaPosicoesCarro(tipo) {
+            var posLeft = 40;
+            listCarPos[0] = posLeft;
+
+            if (tipo == 'entrada') {
+
+                for (var i = 1; i < cancelaEntrada.length; i++) {
+                    posLeft += 220;
+                    listCarPos[i] = posLeft;
+
+                }
+            }else{
+                for (var i = 1; i < cancelaSaida.length; i++) {
+                    posLeft += 220;
+                    listCarPos[i] = posLeft;
+
+                }
+            }
+        }
         
 
         function VerificaFimEntrada(){
@@ -170,7 +236,12 @@
                 $('#tempoEntrada').text( fillZeroes(time.getMinutes()) + ":" + fillZeroes(time.getSeconds()));
                 PararCronometro();
 
-                $('#grupoCancela'+(cancelaEntrada.length-1)).show();
+                //$('#grupoCancela'+(cancelaEntrada.length)).show();
+                RemoveCancela('entrada');
+                cancelaSaida.forEach(AddCancela);
+                cancelaSaida.forEach(AddCancelaBarra);
+                InicializaPosicoesCarro();
+
 
                 VerificaFimSaida();
                 SorteiaProxCancelaSaida();
@@ -193,7 +264,7 @@
                 PararCronometro();
 
 
-                $('#grupoCancela'+(cancelaEntrada.length-1)).show();
+                $('#grupoCancela'+(cancelaEntrada.length)).show();
 
             }else{
                 setTimeout(VerificaFimSaida, 2000);
@@ -202,7 +273,7 @@
         }
 
         function SorteiaProxCancela(){
-            var idCancela = parseInt((Math.random() * 100)%5);
+            var idCancela = parseInt((Math.random() * 10)%cancelaEntrada.length);
 
             if (cancelaEntrada[idCancela] == 0){
                 cancelaEntrada[idCancela] = 1; //Coloca como ocupado
@@ -218,17 +289,22 @@
             }
 
             if (quantidadeCarroCriado < quantidadeCarro){
-                setTimeout(SorteiaProxCancela, parseInt((Math.random() * 10000)%2000));
+                //Sortia o tempo de espera
+                if (quantidadeCarro / 2 > quantidadeCarroCriado){
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 1000)%2000));
+                }else {
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 10000) % 2000));
+                }
             }
         }
 
         function SorteiaProxCancelaSaida(){
 
 
-            var idCancela = parseInt((Math.random() * 100)%6);
+            var idCancela = parseInt((Math.random() * 10)%cancelaSaida.length);
 
-            if (cancelaEntrada[idCancela] == 0){
-                cancelaEntrada[idCancela] = 1; //Coloca como ocupado
+            if (cancelaSaida[idCancela] == 0){
+                cancelaSaida[idCancela] = 1; //Coloca como ocupado
 
                 if (quantidadeCarroSaindo < quantidadeCarro) {
 
@@ -240,7 +316,7 @@
             }
 
             if (quantidadeCarroSaindo < quantidadeCarro){
-                setTimeout(SorteiaProxCancelaSaida, parseInt((Math.random() * 10000)%2000));
+                setTimeout(SorteiaProxCancelaSaida, parseInt((Math.random() * 100)%200));
             }
         }
 
@@ -353,7 +429,7 @@
                 quantidadeCarroSaido++;
                 $("#contadorSaida").text(quantidadeCarroSaido);
 
-                cancelaEntrada[idCancela] = 0; //libera a cancela para o próximo carro
+                cancelaSaida[idCancela] = 0; //libera a cancela para o próximo carro
 
             });
 
@@ -370,6 +446,23 @@
                 '   <img id="divImgCancela'+index+'" class="img_cancela" src="cancela.png" />' +
                 '</div>' +
                 '</div>');
+
+        }
+
+        function RemoveCancela(tipo){
+
+            if (tipo == 'entrada'){
+                for (var i=0; i< cancelaEntrada.length; i++ ){
+                    $('#grupoCancela'+i).remove();
+                }
+                listCarPos = new Array();
+            }else{
+                for (var i=0; i< cancelaSaida.length; i++ ){
+                    $('#grupoCancela'+i).remove();
+                }
+                listCarPos = new Array();
+            }
+
 
         }
 
@@ -526,21 +619,42 @@
     <!--<img class="img_car" src="car-top-red.png" />
 
     <div id="carros"></div>-->
-    <div style="float:right">
-        <p>
-            <input type="text" id="txtLimiteEstacionamento" value="1180" />
-            <input type="button" id="btnStart" value="Iniciar" />
-        </p>
-        <p><h3 id="contador">0</h3> carros estacionados</p>
-        <p><h3 id="contadorSaida">0</h3>carros saído do estacionamento</p>
+    <div style="float:right;" class="float-menu">
 
-        <p>Cronômetro: <h3 class="time"></h3></p>
-        <p>Tempo para entrada veículos: <h3 id="tempoEntrada"></h3></p>
-        <p>Tempo para saída veículos: <h3 id="tempoSaida"></h3></p>
+      <div style="float: left;margin-right: 100px;">
+        <div>
+            Nº Veículos:<input type="text" id="txtLimiteEstacionamento" value="1180" style="width:40px; " />
+            <input type="button" id="btnStart" value="Iniciar" />
+            <input type="button" id="btnClear" value="Stop/Limpar" />
+        </div>
+          <div>
+              Nº Cancelas de Entrada:<input type="text" id="txtTotalCancelasEntrada" value="5" style="width:40px; " />
+              Nº Cancelas de Saída:<input type="text" id="txtTotalCancelasSaida" value="6" style="width:40px; " />
+
+          </div>
+        <div>
+            Carros Estacionados: <b><label id="contador" style="font-size:20px;">0</label></b>
+        </div>
+        <div>
+            Carros Saído do Estacionamento: <label id="contadorSaida" style="font-size:20px; "><b>0</b></label>
+        </div>
+      </div>
+     <div style="float: left;">
+        <div>
+            Cronômetro: <b><label class="time" style="font-size:20px;">0</label></b>
+        </div>
+         <div>
+             Tempo para entrada veículos: <b><label id="tempoEntrada" style="font-size:20px; ">0</label></b>
+         </div>
+         <div>
+             Tempo para saída veículos: <b><lable id="tempoSaida" style="font-size:20px;">0</lable></b>
+         </div>
+     </div>
+
     </div>
 
 
-    <div id="areaEntrada"></div>
+    <div id="areaEntrada" style="height:122px;"></div>
 
 
     <!--<div id="divItemCarro0" class="divItemCarro" style=""><img id="carro0" class="img_car" src="car-top-red.png"></div>-->

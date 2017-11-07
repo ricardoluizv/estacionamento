@@ -283,11 +283,11 @@
 
                 if (rush > tempoAtual){
 
-                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 400)%400));
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 100)%100));
                 } else if (quantidadeCarro / 2 > quantidadeCarroCriado){
-                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 1000)%2000));
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 800)%800));
                 }else {
-                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 10000) % 2000));
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 2000) % 2000));
                 }
             }
         }
@@ -310,7 +310,7 @@
             }
 
             if (quantidadeCarroSaindo < quantidadeCarro){
-                setTimeout(SorteiaProxCancelaSaida, parseInt((Math.random() * 400)%400));
+                setTimeout(SorteiaProxCancelaSaida, parseInt((Math.random() * 2000)%2000));
             }
         }
 

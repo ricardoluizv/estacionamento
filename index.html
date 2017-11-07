@@ -139,7 +139,12 @@
 
         function Inicializa() {
 
-            rush = parseInt((Math.random() * 100)%30);
+            if ($("#ckRush").is(':checked') == false ) {
+
+                rush = parseInt((Math.random() * 100)%30);
+
+            }
+
 
             $("#lblRush").text(rush);
 
@@ -278,8 +283,8 @@
 
 
                 if (rush > tempoAtual){
-                    
-                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 100)%200));
+
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 100)%1000));
                 } else if (quantidadeCarro / 2 > quantidadeCarroCriado){
                     setTimeout(SorteiaProxCancela, parseInt((Math.random() * 1000)%2000));
                 }else {
@@ -324,11 +329,16 @@
             //alert("OFFSET TOP:"+ limite);
 
            // alert("HEIGHT: "+$("#areaEntrada").outerHeight());
+            var tempoPassarCartao = parseInt((Math.random() * 2000)%2000);
 
             $('#divItemCarro'+idCarro).animate({
                 'top':limite
             },2000, null, function(){
-                AbreCancela(idCancela, idCarro);
+
+                setTimeout( function () {
+                    AbreCancela(idCancela, idCarro);
+                }, tempoPassarCartao);
+
             });
 
         }
@@ -370,12 +380,14 @@
          */
         function AbreCancela(id, idCarro) {
 
+
             //alert('teste');
             $('#cancelaBarra'+id).animate({
                 'margin-left':'-30px'
             }, 2000,null, function () {
 
                 ContinuaAnimacaoCarro(id,idCarro);
+
             });
 
             Rotacionar(-45, '#cancelaBarra'+id, 2000,0);
@@ -388,7 +400,9 @@
                 'margin-left':'-30px'
             }, 2000,null, function () {
 
-                ContinuaAnimacaoCarroSaida(id,idCarro);
+                var tempoPassarCartao = parseInt((Math.random() * 100)%1000)
+                setTimeout(ContinuaAnimacaoCarroSaida(id,idCarro), tempoPassarCartao);
+
             });
 
             Rotacionar(-45, '#cancelaBarra'+id, 2000,0);
@@ -613,7 +627,8 @@
      <div style="float: left;">
         <div>
             Cronômetro: <b><label class="time" style="font-size:20px;">0</label></b>&nbsp;&nbsp;
-            Tempo Rush: <b><label id="lblRush" style="font-size:20px;">0</label></b>
+            Tempo Rush: <b><label id="lblRush" style="font-size:20px;">0</label></b>&nbsp;&nbsp;
+            Desabilitar Modo Rush: <input type="checkbox" id="ckRush" />
         </div>
          <div>
              Tempo para entrada veículos: <b><label id="tempoEntrada" style="font-size:20px; ">0</label></b>

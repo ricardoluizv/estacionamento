@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="jquery.js"></script>
-    <script src="jquery-collision.min.js"></script>
     <style type="text/css">
 
         .divCancela{
@@ -284,7 +283,7 @@
 
                 if (rush > tempoAtual){
 
-                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 100)%1000));
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 400)%400));
                 } else if (quantidadeCarro / 2 > quantidadeCarroCriado){
                     setTimeout(SorteiaProxCancela, parseInt((Math.random() * 1000)%2000));
                 }else {
@@ -311,7 +310,7 @@
             }
 
             if (quantidadeCarroSaindo < quantidadeCarro){
-                setTimeout(SorteiaProxCancelaSaida, parseInt((Math.random() * 100)%200));
+                setTimeout(SorteiaProxCancelaSaida, parseInt((Math.random() * 400)%400));
             }
         }
 

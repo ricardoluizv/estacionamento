@@ -110,6 +110,8 @@
         var quantidadeCarroSaido = 0;
 
         var carroSel = -1;
+        var rush = 0; //O tempo de entrada que possui o maior nº de veículos
+
 
         $(document).ready(function () {
 
@@ -135,9 +137,11 @@
         });
 
 
-
         function Inicializa() {
 
+            rush = parseInt((Math.random() * 100)%30);
+
+            $("#lblRush").text(rush);
 
             cancelaEntrada = new Array(parseInt($("#txtTotalCancelasEntrada").val()));
             for (var i=0; i< cancelaEntrada.length; i++){
@@ -171,18 +175,7 @@
             $('#grupoCancela'+(cancelaEntrada.length)).hide();
 
 
-
             $('#areaEntrada').append('<div style="clear: both;"></div>');
-
-
-            /*var posLeft = 40;
-            listCarPos[0] = posLeft;
-            for (var i=1; i< cancelaEntrada.length; i++)
-            {
-                posLeft += 220;
-                listCarPos[i] = posLeft;
-
-            }*/
 
             InicializaPosicoesCarro('entrada');
 
@@ -191,15 +184,6 @@
 
                 SorteiaProxCancela();
 
-                /*
-                setTimeout(function(){
-
-                    alert('sada');
-                    if (quantidadeCarroCriado >= quantidadeCarro) {
-                        MoveCarroSaida(0);
-                    }
-
-                },2000);*/
                 VerificaFimEntrada();
 
 
@@ -290,7 +274,13 @@
 
             if (quantidadeCarroCriado < quantidadeCarro){
                 //Sortia o tempo de espera
-                if (quantidadeCarro / 2 > quantidadeCarroCriado){
+                var tempoAtual =  parseInt(fillZeroes(time.getMinutes()));
+
+
+                if (rush > tempoAtual){
+                    
+                    setTimeout(SorteiaProxCancela, parseInt((Math.random() * 100)%200));
+                } else if (quantidadeCarro / 2 > quantidadeCarroCriado){
                     setTimeout(SorteiaProxCancela, parseInt((Math.random() * 1000)%2000));
                 }else {
                     setTimeout(SorteiaProxCancela, parseInt((Math.random() * 10000) % 2000));
@@ -324,9 +314,16 @@
 
         function ExecutaAnimacaoCarro(idCarro,idCancela){
 
-            var limite = $(window).height();
+            var limite  =0;
+            /*var limite = $(window).height();
             limite = (limite / 2);
-            limite = limite - (limite * 0.4);
+            limite = limite - (limite * 0.4);*/
+
+            limite = $("#areaEntrada").offset().top + $("#areaEntrada").outerHeight();
+
+            //alert("OFFSET TOP:"+ limite);
+
+           // alert("HEIGHT: "+$("#areaEntrada").outerHeight());
 
             $('#divItemCarro'+idCarro).animate({
                 'top':limite
@@ -467,9 +464,8 @@
         }
 
         function AddCancelaBarra(item, index) {
-            $('#grupoCancela'+index).append('<div class="divItemCancelaBarra"><img id="cancelaBarra'+index+'" class="img_cancela_barra" src="cancela_barra.png" /></div>');
 
-            //$('#areaEntrada').append('<div class="itemBarraParada"><img id="barra_parada\'+index+\'" class="barraParada" src="barra_parada.png" /></div>');
+            $('#grupoCancela'+index).append('<div class="divItemCancelaBarra"><img id="cancelaBarra'+index+'" class="img_cancela_barra" src="cancela_barra.png" /></div>');
 
         }
 
@@ -481,16 +477,6 @@
                 '</div>');
 
         }
-
-        /*function AddCarroSaida(index, left, idCarro){
-
-            quantidadeCarroCriado++;
-            $('body').append('<div id="divItemCarro'+idCarro+'" class="divItemCarroSaida" style=" left: '+left+'px;" >' +
-                '<img id="carro'+idCarro+'" class="img_car" src="car-top-red.png" />' +
-                '</div>');
-
-        }*/
-
 
         function Rotacionar(graus, elem, duracao, grausAtual){
 
@@ -524,28 +510,13 @@
 
             Rotacionar(270, "#carro"+idCarro,0,0);
 
-            var limite = $(window).height();
-            /*limite = (limite / 2);
-            limite = limite - (limite * 0.4);*/
-
-            /*$('#divItemCarro'+idCarro).css("top", $('#divItemCarro'+idCarro).offset().top);
-            $('#divItemCarro'+idCarro).css("left",listCarPos[0]);
-            $('#divItemCarro'+idCarro).css("bottom", limite);*/
+            var limite =  $("#areaEntrada").offset().top-90;//$(window).height();
 
             $('#divItemCarro'+idCarro).css("left", listCarPos[idCancela]);
 
 
-            /*var limite = $(window).height();
-            limite = (limite / 2);
-            limite = limite + (limite * 0.4);*/
-            //var limite = $('#divItemCarro'+idCarro).offset().top;
-
-            limite *= -1;
-            //alert($('#divItemCarro'+idCarro).offset().top);
-
-
             $('#divItemCarro'+idCarro).animate({
-                'top':103
+                'top':limite//103
             },2000, null, function(){
                 //AbreCancela(idCancela, idCarro);
                 AbreCancelaSaida(idCancela, idCarro)
@@ -641,7 +612,8 @@
       </div>
      <div style="float: left;">
         <div>
-            Cronômetro: <b><label class="time" style="font-size:20px;">0</label></b>
+            Cronômetro: <b><label class="time" style="font-size:20px;">0</label></b>&nbsp;&nbsp;
+            Tempo Rush: <b><label id="lblRush" style="font-size:20px;">0</label></b>
         </div>
          <div>
              Tempo para entrada veículos: <b><label id="tempoEntrada" style="font-size:20px; ">0</label></b>
